@@ -1,0 +1,191 @@
+import React,
+{
+    Component
+}
+
+from 'react';
+import {
+    render
+}
+
+from 'react-dom';
+import Hello from './Hello';
+import AutoComplete from 'material-ui/AutoComplete';
+import FlatButton from 'material-ui/FlatButton';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import axios from 'axios';
+import './style.css';
+class App extends Component {
+    constructor() {
+        super();
+        this.state= {
+            name: 'React',
+            inputValue: '',
+            dataSource:[ {
+                "id": 0, "age": 30, "firstName": "Romero", "lastName": "Olson", "gender": "male", "company": "GEEKULAR", "email": "romeroolson@geekular.com"
+            }
+            ,
+            {
+                "id": 1, "age": 37, "firstName": "Mcmahon", "lastName": "Carpenter", "gender": "male", "company": "UBERLUX", "email": "mcmahoncarpenter@uberlux.com"
+            }
+            ,
+            {
+                "id": 2, "age": 30, "firstName": "Mcleod", "lastName": "Whitaker", "gender": "male", "company": "VERBUS", "email": "mcleodwhitaker@verbus.com"
+            }
+            ,
+            {
+                "id": 3, "age": 37, "firstName": "Patton", "lastName": "Bauer", "gender": "male", "company": "UXMOX", "email": "pattonbauer@uxmox.com"
+            }
+            ,
+            {
+                "id": 4, "age": 39, "firstName": "Mason", "lastName": "Paul", "gender": "male", "company": "SNORUS", "email": "masonpaul@snorus.com"
+            }
+            ,
+            {
+                "id": 5, "age": 32, "firstName": "Vanessa", "lastName": "Davis", "gender": "female", "company": "PLAYCE", "email": "vanessadavis@playce.com"
+            }
+            ,
+            {
+                "id": 6, "age": 20, "firstName": "Grace", "lastName": "Fitzpatrick", "gender": "female", "company": "COMVENE", "email": "gracefitzpatrick@comvene.com"
+            }
+            ,
+            {
+                "id": 7, "age": 35, "firstName": "William", "lastName": "Collier", "gender": "male", "company": "SENMEI", "email": "williamcollier@senmei.com"
+            }
+            ,
+            {
+                "id": 8, "age": 40, "firstName": "Little", "lastName": "Maxwell", "gender": "male", "company": "BLEENDOT", "email": "littlemaxwell@bleendot.com"
+            }
+            ,
+            {
+                "id": 9, "age": 36, "firstName": "Billie", "lastName": "Mejia", "gender": "female", "company": "DUOFLEX", "email": "billiemejia@duoflex.com"
+            }
+            ,
+            {
+                "id": 10, "age": 35, "firstName": "Woods", "lastName": "Case", "gender": "male", "company": "TRIBALOG", "email": "woodscase@tribalog.com"
+            }
+            ],
+            selectedUser: {}
+            ,
+            selectedData: {}
+            ,
+            showData: false
+        }
+        ;
+        this.updateInput=this.updateInput.bind(this);
+        this.selectedUser=this.selectedUser.bind(this);
+    }
+    updateInput(searchText) {
+        if(searchText.length>=3) {
+            axios.get('https://api.github.com/users') .then((response)=> {
+                this.setState( {
+                    inputValue: searchText, dataSource: response.data
+                }
+                );
+            }
+            )
+        }
+    }
+    selectedUser(chosenRequest) {
+        this.setState( {
+            selectedUser: chosenRequest
+        }
+        )
+    }
+    selectedRow(selectedIndex) {
+        this.setState( {
+            selectedData: this.state.selectedUser, showData: true
+        }
+        );
+    }
+    backButton() {
+        this.setState( {
+            showData: false
+        }
+        );
+    }
+    render() {
+        return ( <MuiThemeProvider> <div> <Hello name= {
+            this.state.name
+        }
+        /> </div> {
+            !this.state.showData ? <div> <AutoComplete floatingLabelText="Search Here" filter= {
+                (searchText, key)=> {
+                    if(searchText.length>=3) return searchText !=='' && key.indexOf(searchText) !==-1
+                }
+            }
+            value= {
+                this.state.inputValue
+            }
+            dataSourceConfig= {
+                {
+                    text: 'login', value: 'email'
+                }
+            }
+            dataSource= {
+                this.state.dataSource
+            }
+            onUpdateInput= {
+                (searchText)=>this.updateInput(searchText)
+            }
+            onNewRequest= {
+                (chosenRequest)=>this.selectedUser(chosenRequest)
+            }
+            /> {
+                Object.keys(this.state.selectedUser).map((Obj, index)=> <ul key= {
+                    index
+                }
+                > {
+                    Obj==='login' ? <li onClick= {
+                        ()=> this.selectedRow(index)
+                    }
+                    >Name: {
+                        this.state.selectedUser[Obj]
+                    }
+                    </li>:""
+                }
+                {
+                    Obj==='id' ? <li>Id: {
+                        this.state.selectedUser[Obj]
+                    }
+                    </li>:""
+                }
+                </ul>)
+            }
+            </div>: <div> {
+                Object.keys(this.state.selectedData).map((Obj, index)=> <span key= {
+                    index
+                }
+                > {
+                    Obj==="id" ? <span>Id: {
+                        this.state.selectedData[Obj]
+                    }
+                    <br /></span>: ""
+                }
+                {
+                    Obj==="login" ? <span>User: {
+                        this.state.selectedData[Obj]
+                    }
+                    <br /></span>: ""
+                }
+                {
+                    Obj==="avatar_url" ? <span>Image:<img src= {
+                        this.state.selectedData[Obj]
+                    }
+                    alt="img" /></span>: ""
+                }
+                </span>)
+            }
+            <FlatButton label="Back" primary= {
+                true
+            }
+            onClick= {
+                ()=> this.backButton()
+            }
+            /> </div>
+        }
+        </MuiThemeProvider>);
+    }
+}
+
+render(<App />, document.getElementById('root'));
