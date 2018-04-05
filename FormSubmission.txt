@@ -1,25 +1,65 @@
-import React, { Component } from 'react'; import { render } from 'react-dom'; import Hello from './Hello'; import './style.css'; import axios from 'axios'; import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'; class App extends Component { constructor() { super(); this.state = { name: 'React', username: "", employeeId: "", successMsg: "" }; this.handleNameChange = this.handleNameChange.bind(this); this.handleEmployeeChange = this.handleEmployeeChange.bind(this); this.handleSubmit = this.handleSubmit.bind(this); } handleNameChange(event) { this.setState({ username: event.target.value }); } handleEmployeeChange(event) { this.setState({ employeeId: event.target.value }); } handleSubmit(event) { axios({ method: 'post', url: "https://reqres.in/api/users", data: { "username": this.state.username, "employeeId": this.state.employeeId } }) .then((response) => { this.setState({ successMsg: response.status }); }) event.preventDefault(); } render() { return (
-<MuiThemeProvider>
-    <div>
-        <Hello name={this.state.name} />
-        <p>
-            Start editing to see some magic happen :)
-        </p>
-        <form onSubmit={this.handleSubmit}>
-            <div>
-                Name:
-                <input type="text" value={this.state.username} onChange={this.handleNameChange} />
-            </div>
-            <div>
-                Employee Id:
-                <input type="text" value={this.state.employeeId} onChange={this.handleEmployeeChange} />
-            </div>
-            <input type="submit" value="Submit" />
-            <br />
-            <span>{this.state.successMsg === 201 ? <span>Data Submitted Successfully !!</span> : ""}</span>
-        </form>
-    </div>
-</MuiThemeProvider>
-); } } render(
+import React, { Component } from 'react';
+import { render } from 'react-dom';
+import Hello from './Hello';
+import './style.css';
+import axios from 'axios';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+class App extends Component {
+constructor() { 
+    super(); 
+    this.state = { name: 'React',
+                    username: "",
+                    employeeId: "",
+                    successMsg: "" 
+                   };
+    this.handleNameChange = this.handleNameChange.bind(this);
+    this.handleEmployeeChange = this.handleEmployeeChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+} 
+
+handleNameChange(event) {
+    this.setState({ username: event.target.value }); 
+} 
+handleEmployeeChange(event) {
+    this.setState({ employeeId: event.target.value });
+} 
+handleSubmit(event) { 
+    axios({
+            method: 'post', 
+            url: "https://reqres.in/api/users", 
+            data: { 
+                "username": this.state.username,
+                "employeeId": this.state.employeeId 
+            } 
+           }).then((response) => {
+            this.setState({ successMsg: response.status }); 
+           }) 
+     event.preventDefault();
+}
+render() {
+    return (
+    <MuiThemeProvider>
+        <div>
+            <Hello name={this.state.name} />
+            <p>
+                Start editing to see some magic happen :)
+            </p>
+            <form onSubmit={this.handleSubmit}>
+                <div>
+                    Name:
+                    <input type="text" value={this.state.username} onChange={this.handleNameChange} />
+                </div>
+                <div>
+                    Employee Id:
+                    <input type="text" value={this.state.employeeId} onChange={this.handleEmployeeChange} />
+                </div>
+                <input type="submit" value="Submit" />
+                <br />
+                <span>{this.state.successMsg === 201 ? <span>Data Submitted Successfully !!</span> : ""}</span>
+            </form>
+        </div>
+    </MuiThemeProvider>
+); }
+}
 
 <App />, document.getElementById('root'));
